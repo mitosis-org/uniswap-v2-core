@@ -2,8 +2,12 @@ pragma solidity =0.5.16;
 
 import './interfaces/IUniswapV2Factory.sol';
 import './UniswapV2Pair.sol';
+import '../mitosis-protocol-public/src/interfaces/hub/IMitosis.sol';
 
 contract UniswapV2Factory is IUniswapV2Factory {
+    address public mitosis;
+    address public eolDelegate;
+
     address public feeTo;
     address public feeToSetter;
 
@@ -12,8 +16,14 @@ contract UniswapV2Factory is IUniswapV2Factory {
 
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
-    constructor(address _feeToSetter) public {
+    constructor(address _feeToSetter, address _mitosis, address _eolDelegate) public {
         feeToSetter = _feeToSetter;
+
+        // integrate with Mitosis
+        mitosis = _mitosis;
+        eolDelegate = _eolDelegate;
+        IMitosis(mitosis).setDefaultDelegatee(address(this), eolDelegate);
+        IMitosis(mitosis).setDelegationManager(address(this), eolDelegate);
     }
 
     function allPairsLength() external view returns (uint) {

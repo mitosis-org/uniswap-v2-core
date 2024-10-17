@@ -1,0 +1,3 @@
+[submodule "mitosis-protocol-public"]
+	path = mitosis-protocol-public
+	url = https://github.com/mitosis-org/protocol-public

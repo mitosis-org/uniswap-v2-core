@@ -7,6 +7,7 @@ import './libraries/UQ112x112.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IUniswapV2Factory.sol';
 import './interfaces/IUniswapV2Callee.sol';
+import '../mitosis-protocol-public/src/interfaces/hub/IMitosis.sol';
 
 contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     using SafeMath  for uint;
@@ -67,6 +68,12 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
         require(msg.sender == factory, 'UniswapV2: FORBIDDEN'); // sufficient check
         token0 = _token0;
         token1 = _token1;
+
+        // integrate with Mitosis
+        IMitosis mitosis = IMitosis(IUniswapV2Factory(factory).mitosis());
+        address eolDelegate = IUniswapV2Factory(factory).eolDelegate();
+        mitosis.setDefaultDelegatee(address(this), eolDelegate);
+        mitosis.setDelegationManager(address(this), eolDelegate);
     }
 
     // update reserves and, on the first call per block, price accumulators
